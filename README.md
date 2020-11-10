@@ -38,8 +38,9 @@ $ yarn
 ```
 
 ### 3. Import oakwood.sql file to your MySQL database
-### 4. Launch your Oakwood server
-### 5. Launch the gamemode
+### 4. Edit your MySQL credentials in .env file if needed
+### 5. Launch your Oakwood server
+### 6. Launch the gamemode
 ```sh
 $ node index.js
 ```
