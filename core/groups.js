@@ -1,4 +1,4 @@
-const ranks = new Map();
+ranks = new Map();
 
 ranks.set(0, ["Player", 10, ""]);
 ranks.set(1, ["VIP", 20, ""]);
@@ -11,6 +11,6 @@ ranks.set(7, ["Developer", 80, ""]);
 ranks.set(8, ["Administrator", 90]);
 ranks.set(9, ["Owner", 100]);
 
-function getRankById(id) {
+getRankById = (id) => {
     return ranks.get(id);
 }

@@ -1,10 +1,10 @@
 const { createClient, vehicleModels } = require("oakwood");
-const veh = require("./vehicles");
-const db = require("./db.js");
 const oak = createClient();
-let d;
-const vehiclesShop = new Map();
-let vehs = [];
+vehiclesToBuy = [];
+vehiclesShop = new Map();
+
+const loadShopVehs = () => knex("vehicle_shop");
+
 const positions = [
   (a = [
     [-1531.1265869140625, 14.229043960571289, 513.5451049804688],
@@ -51,10 +51,9 @@ const positions = [
     [-13.714813232421875],
   ]),
 ];
-console.log(positions[0][0]);
 oak.event("start", async () => {
   vehs = [];
-  let a = await db.loadShopVehs();
+  let a = await loadShopVehs();
   a.forEach((element) => {
     vehs.push(element);
   });
@@ -65,48 +64,64 @@ oak.cmd("spawn", async (pid) => {
   placeVehs();
 });
 
-// setInterval(() => {
-//     placeVehs()
-// }, 3000);
+// Randomize cars at the dealership every hour
+setInterval(() => {
+  placeVehs();
+}, 60000 * 60);
 
 async function placeVehs() {
-  console.log(`Dlug: ${vehiclesShop.length}`);
   for (const [key, value] of vehiclesShop.entries()) {
-    console.log(key);
     await oak.vehicleDespawn(key);
   }
 
-  console.log(vehs.length);
   const assignedPlaces = [];
   vehs.forEach(async (el, i) => {
     const rand = Math.floor(Math.random() * positions.length);
     if (!assignedPlaces.includes(rand)) {
       let randomPos = positions[rand];
-      console.log(randomPos[0]);
       assignedPlaces.push(rand);
-      var m = parseInt(el.model);
-      d[i] = await oak.vehicleSpawn(
+      let m = parseInt(el.model);
+      vehiclesToBuy[i] = await oak.vehicleSpawn(
         vehicleModels[m][1],
         randomPos[0],
         randomPos[1][0]
       );
-      vehiclesShop.set(d[i], { model: vehicleModels[m][0], price: el.price });
-      console.log(`Spawned ${el.model}`);
+      vehiclesShop.set(vehiclesToBuy[i], {
+        owner: "DEALERSHIP",
+        model: vehicleModels[m][0],
+        modelID: parseInt(el.model),
+        price: el.price,
+      });
     }
   });
 }
 
 oak.cmd("buy", async (pid) => {
-  const player = pc.playerList.get(await oak.playerNameGet(pid));
-  if (player.canAfford(1760)) {
-    let car = vehicles.get(lastveh);
-    car.owner = pid;
-    oak.chatSend(pid, `[$] You've paid $1760`);
-    oak.chatSend(pid, vehicleModels[car.model][0] + " now belongs to you!");
+  const player = await Players.get(await oak.playerNameGet(pid));
+  let car = vehiclesShop.get(lastveh);
+  if (player.canAfford(car.price)) {
+    oak.chatSend(pid, `[$] You've paid ${car.price}`);
+    oak.chatSend(pid, car.model + " now belongs to you!");
+    let plate = await generatePlate();
+    vehiclesShop.delete(lastveh);
+    vehicles.set(lastveh, {
+      owner: player.id,
+      plate: plate,
+      model: car.modelID,
+    });
+    db: vehicle: give(
+      car.modelID,
+      player.id,
+      plate,
+      await oak.vehiclePositionGet(lastveh),
+      await oak.vehicleHeadingGet(lastveh)
+    );
+    player.removeMoney(car.price);
+    console.log(`PRICE: ${car.price}`);
   } else {
     oak.chatSend(pid, `[$] You can't afford this vehicle`);
   }
 });
-async function getOut(pid, veh) {
+getOut = async (pid, veh) => {
   await oak.vehiclePlayerRemove(veh, pid);
-}
+};

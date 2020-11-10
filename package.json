@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
+    "dotenv": "^8.2.0",
     "knex": "^0.19.5",
     "mysql2": "^1.7.0",
     "oakwood": "^2.3.1"
