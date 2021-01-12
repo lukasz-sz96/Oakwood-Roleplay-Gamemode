@@ -12,7 +12,13 @@ require("./vehicles/vehicleShop.js");
 require("./chat/chat.js");
 require("./helpers.js")
 require("./admin/commands.js")
-
+require("./factions/shared.js")
+require("./factions/lhpd/lhpd.js")
+require("./factions/mafia/mafia.js")
+oak.event('start', () => {
+  console.log('[info] connection started')
+  oak.log('[info] oakwood-node connected')
+})
 oak.event("playerConnect", async (pid) => {
   console.log("[info] player connected", pid);
 

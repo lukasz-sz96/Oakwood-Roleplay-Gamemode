@@ -5,7 +5,7 @@ oak.cmd("me", async (pid, ...args) => {
   chatMe(pid, args.join(" "), 10);
 });
 
-async function chatMe(pid, message, range) {
+chatMe = async (pid, message, range) => {
   let receivers = await getNearbyPlayers(pid, range);
   let author = await oak.playerNameGet(pid);
 
