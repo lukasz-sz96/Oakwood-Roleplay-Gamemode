@@ -69,7 +69,7 @@ setInterval(() => {
   placeVehs();
 }, 60000 * 60);
 
-async function placeVehs() {
+placeVehs = async () => {
   for (const [key, value] of vehiclesShop.entries()) {
     await oak.vehicleDespawn(key);
   }

@@ -65,3 +65,4 @@ generatePlate = async () => {
   return result;
 };
 
+getPlayerData = async (target) => Players.get(await oak.playerNameGet(target))

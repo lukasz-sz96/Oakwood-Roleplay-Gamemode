@@ -6,7 +6,7 @@ const saltRounds = 10;
 
 Players = new Map();
 
-async function loadPlayer(nick, id, pid) {
+loadPlayer = (nick, id, pid) => {
   let playero;
   await knex("users")
     .where({ name: nick })
@@ -28,7 +28,7 @@ async function loadPlayer(nick, id, pid) {
   applyPlayer(playero);
 }
 
-async function applyPlayer(player, pid) {
+applyPlayer = async (player, pid) => {
   console.log(`PID: ${await oak.playerNameGet(pid)}`);
   Players.set(await oak.playerNameGet(pid), player);
   console.log(`Saved player data to object: ${JSON.stringify(player)}`);
@@ -40,7 +40,7 @@ const spawnplayer = async (pid) => {
   let model;
   await knex("users")
     .where({ name: plName })
-    .then(function (player) {
+    .then((player) => {
       loc = JSON.parse(player[0].pos);
       model = playerModels[JSON.parse(player[0].skin)][1];
       oak.playerModelSet(pid, model);
@@ -56,25 +56,25 @@ const spawnplayer = async (pid) => {
   }, 60000);
 };
 
-async function savePos(pid) {
+savePos = async (pid) => {
   const plName = await oak.playerNameGet(pid);
   const pos = await oak.playerPositionGet(pid);
 
   savePlayerPos(plName, pos);
 }
 
-async function savePlayerPos(plName, pos) {
+savePlayerPos = async (plName, pos) => {
   if (pos[0] != -1 && pos[0] != 0) {
     knex("users")
       .where({ name: plName })
       .update({ pos: JSON.stringify(pos) })
-      .then(function (result) {
+      .then((result) => {
         console.log(`Saved ${result} Players`);
       });
   }
 }
 
-async function findPlayerByLocalId(id) {
+findPlayerByLocalId = async (id) => {
   let rv = undefined;
   await Players.forEach((element) => {
     if (Number(element.id) == Number(id)) {
@@ -97,12 +97,12 @@ oak.cmd("login", async (pid, pass) => {
 const check = (plName, pass, pid) => {
   knex("users")
     .where({ name: plName })
-    .then(function (player) {
+    .then((player) => {
       if (JSON.stringify(player[0]) == undefined) {
         oak.chatSend(pid, `[info] Account doesn't exist`);
         return;
       }
-      bcrypt.compare(pass, player[0].password, function (err, result) {
+      bcrypt.compare(pass, player[0].password, (err, result) => {
         if (result) {
           oak.chatSend(pid, `[info] Logged in successfully`);
           spawn(pid);
@@ -116,11 +116,11 @@ const check = (plName, pass, pid) => {
 
 const register = async (pid, pass) => {
   const plName = await oak.playerNameGet(pid);
-  bcrypt.genSalt(saltRounds, function (err, salt) {
-    bcrypt.hash(pass, salt, async function (err, hash) {
+  bcrypt.genSalt(saltRounds, (err, salt) => {
+    bcrypt.hash(pass, salt, async (err, hash) => {
       await knex("users")
         .insert({ name: plName, password: hash })
-        .then(function (id, err) {
+        .then((id, err) => {
           if (err) {
             console.log(`Couldn't register player: ${err}`);
           } else {
@@ -146,6 +146,7 @@ class Player {
     this.punishment =
       data.punishment === undefined ? null : JSON.parse(data.punishment);
     this.bw = false;
+    //this.inventory = data.inventory;
     this.money = data.money;
     this.bank = data.bank;
     this.job = data.job;
