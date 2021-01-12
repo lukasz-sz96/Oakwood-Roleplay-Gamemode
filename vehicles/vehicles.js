@@ -29,7 +29,9 @@ oak.event("start", async () => {
       owner: currentVehicle[i].owner,
       plate: currentVehicle[i].plate,
       model: currentVehicle[i].model,
+      locked: currentVehicle[i].locked,
     });
+    vehicleLockSet(vehicleArray[i], currentVehicle[i].locked)
     console.log(
       `Spawned ${vehicleModels[m][0]} on pos ${currentVehicle[i].pos}`
     );
